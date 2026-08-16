@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#9e9e9e"/>
+  
+  <defs>
+    <pattern id="nostop" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="white" stroke-width="6"/>
+    </pattern>
+  </defs>
+  
+  <!-- 停止禁止部分 (白色の実線と白色の斜線、四角形) -->
+  <rect x="20" y="40" width="160" height="120" fill="url(#nostop)" stroke="white" stroke-width="6"/>
+</svg>

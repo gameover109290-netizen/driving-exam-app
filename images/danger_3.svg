@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Night Background -->
+  <rect width="400" height="400" fill="#212121"/>
+  <!-- Road -->
+  <rect x="100" y="0" width="200" height="400" fill="#424242"/>
+  <!-- Center Line -->
+  <line x1="200" y1="0" x2="200" y2="400" stroke="white" stroke-width="4" stroke-dasharray="10,10"/>
+  
+  <!-- Headlights cone -->
+  <polygon points="140,280 180,280 230,100 70,100" fill="#fff59d" opacity="0.3"/>
+  
+  <!-- Ego Car (Blue) -->
+  <rect x="135" y="280" width="50" height="80" rx="5" fill="#1976d2"/>
+  
+  <!-- Parked Car (Grey) -->
+  <rect x="110" y="80" width="40" height="70" rx="5" fill="#757575"/>
+  
+  <!-- Pedestrian (Orange) stepping out -->
+  <circle cx="160" cy="120" r="10" fill="#ff9800"/>
+  <text x="175" y="115" font-family="sans-serif" font-weight="bold" font-size="24" fill="red">!</text>
+</svg>

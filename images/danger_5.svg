@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#8bc34a"/>
+  <!-- Narrow Road -->
+  <rect x="100" y="0" width="200" height="400" fill="#9e9e9e"/>
+  <!-- No center line for narrow road -->
+  <!-- Side lines -->
+  <line x1="110" y1="0" x2="110" y2="400" stroke="white" stroke-width="4"/>
+  <line x1="290" y1="0" x2="290" y2="400" stroke="white" stroke-width="4"/>
+  
+  <!-- Ego Car (Blue) -->
+  <rect x="130" y="280" width="60" height="90" rx="5" fill="#1976d2"/>
+  
+  <!-- Oncoming Car (Red) -->
+  <rect x="210" y="60" width="60" height="90" rx="5" fill="#d32f2f"/>
+  
+  <!-- Pedestrian (Orange) on the left edge -->
+  <circle cx="130" cy="180" r="12" fill="#ff9800"/>
+  <text x="145" y="175" font-family="sans-serif" font-weight="bold" font-size="24" fill="red">!</text>
+</svg>
