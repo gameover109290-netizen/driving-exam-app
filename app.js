@@ -135,13 +135,22 @@ function startSession(mode) {
         prioritized = shuffleArray(prioritized);
         others = shuffleArray(others);
         
-        // 優先問題を最大40問（全体90問の場合）抽出して混ぜる
         let maxPrioritized = mode === 'honmen' ? 40 : 20;
         let selected = prioritized.slice(0, maxPrioritized);
         let remainingNeeded = numQuestions - selected.length;
         selected = selected.concat(others.slice(0, remainingNeeded));
         
-        sessionQuestions = shuffleArray(selected); // 最終シャッフル
+        // 【安全対策】万が一問題データに重複があった場合でも、1回の試験中には絶対に重複して出題されないように除外する
+        const uniqueSelected = [];
+        const seenQuestions = new Set();
+        selected.forEach(q => {
+            if (!seenQuestions.has(q.question)) {
+                seenQuestions.add(q.question);
+                uniqueSelected.push(q);
+            }
+        });
+        
+        sessionQuestions = shuffleArray(uniqueSelected); // 最終シャッフル
         
         if (mode === 'honmen') {
             dangerSessionQuestions = shuffleArray(dangerQuestions).slice(0, 5);

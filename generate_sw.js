@@ -27,8 +27,8 @@ const mediaFiles = getFiles('media');
 const allFiles = [...coreFiles, ...imageFiles, ...mediaFiles];
 
 const swContent = `
-const CACHE_NAME = 'driving-exam-cache-v2';
-const urlsToCache = ${JSON.stringify(allFiles, null, 4)};
+const CACHE_NAME = 'driving-exam-cache-v3';
+const urlsToCache = \${JSON.stringify(allFiles, null, 4)};
 
 self.addEventListener('install', event => {
     event.waitUntil(
