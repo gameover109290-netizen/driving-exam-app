@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>運転免許 学科試験対策</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="学科試験">
+    <link rel="apple-touch-icon" href="icons/icon-180x180.png">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>運転免許 学科試験対策</h1>
+            <div id="progress" class="progress">問題 1 / 50</div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="container">
+            <h1 style="text-align: center; margin-bottom: 2rem;">運転免許 学科試験</h1>
+            <p style="text-align: center; margin-bottom: 2rem;">受験するモードを選択してください。</p>
+            <button onclick="startSession('karimen')" class="btn" style="width: 100%; margin-bottom: 1rem;">仮免モード (50問)</button>
+            <button onclick="startSession('honmen')" class="btn" style="width: 100%; margin-bottom: 1rem; background-color: #f57c00; color: white;">本免モード (90問 + 危険予測5問)</button>
+            
+            <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ccc;">
+            
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <strong>ストックされている弱点問題: <span id="weakness-count" style="color: #d32f2f; font-size: 1.2em;">0</span> 問</strong>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <button id="weakness-btn" onclick="startSession('weakness')" class="btn" style="flex: 3; background-color: #d32f2f; color: white;" disabled>弱点特訓モード (間違えた問題のみ)</button>
+                <button id="reset-weakness-btn" onclick="resetWeaknessList()" class="btn" style="flex: 1; background-color: #f3f2f1; border: 1px solid #ccc;">リセット</button>
+            </div>
+            <p style="font-size: 0.85em; color: #666; text-align: center; margin-bottom: 2rem;">※本免・仮免モードで間違えた問題が自動的にここに溜まります。正解すると消えます。</p>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz-screen" style="display: none;">
+            <div class="question-section">
+                <img id="question-image" class="question-image" src="" alt="標識画像" style="display: none;">
+                <div id="question-text" class="question-text">
+                    ここに問題文が表示されます。
+                </div>
+            </div>
+
+            <div id="controls-section" class="controls">
+                <button class="btn btn-correct" onclick="selectOption('○')">○</button>
+                <button class="btn btn-wrong" onclick="selectOption('×')">×</button>
+            </div>
+            
+            <div id="danger-section" style="display: none;">
+                <h3 style="color: #d13438;">危険予測問題</h3>
+                <img id="danger-image" src="" style="width: 100%; max-width: 400px; display: none; margin: 0 auto 1rem auto; border: 1px solid #ccc;">
+                <video id="danger-video" src="" controls style="width: 100%; max-width: 400px; display: none; margin: 0 auto 1rem auto; border: 1px solid #ccc;"></video>
+                <p id="danger-scenario" style="font-weight: bold; margin-bottom: 1rem;"></p>
+                <div id="danger-subquestions"></div>
+                
+                <button id="danger-submit-btn" class="btn" style="width: 100%; margin-top: 1rem;" onclick="submitDangerAnswer()" disabled>決定</button>
+            </div>
+
+            <button id="submit-btn" class="btn" style="width: 100%; margin-top: 1rem;" onclick="submitAnswer()" disabled>決定（解答を見る）</button>
+            <button id="skip-btn" class="skip-btn" onclick="skipQuestion()">スキップ</button>
+
+            <div id="explanation-section" class="explanation-section">
+                <div id="result-badge" class="result-badge">正解！</div>
+                <div class="explanation-title">解説：</div>
+                <video id="explanation-video" src="" controls style="display: none; max-width: 100%; margin-bottom: 1rem; border-radius: 4px;"></video>
+                <div id="explanation-text" class="explanation-text">
+                    ここに解説文が表示されます。
+                </div>
+            </div>
+
+            <div id="next-btn-container" class="next-btn-container">
+                <button id="next-btn" class="secondary-btn" onclick="nextQuestion()">次の問題へ</button>
+            </div>
+        </div>
+
+        <!-- Score Section -->
+        <div id="score-screen" class="score-screen" style="display: none;">
+            <h2>学習完了！</h2>
+            <div id="result-status" class="result-status"></div>
+            <div class="score-text">正解数: <span id="final-score">0</span> / <span id="total-questions">50</span> (<span id="score-percentage">0</span>%)</div>
+            <p id="result-message" class="result-message">本番でも安定して合格ライン（90％以上）を出せるように反復練習しましょう！</p>
+            <button class="primary-btn" onclick="restartQuiz()" style="margin-top: 1.5rem; margin-bottom: 2rem;">違う50問で最初からやり直す</button>
+            
+            <div class="review-section">
+                <h3>振り返り（今回の全問題と解説）</h3>
+                <div id="review-list" class="review-list">
+                    <!-- Review items will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="questions.js"></script>
+    <script src="danger_questions.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

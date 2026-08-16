@@ -1,0 +1,362 @@
+:root {
+    --primary-color: #0078d4; /* Microsoft Blue */
+    --primary-hover: #106ebe;
+    --background-color: #f3f2f1;
+    --card-background: #ffffff;
+    --text-primary: #323130;
+    --text-secondary: #605e5c;
+    --success-color: #107c10;
+    --error-color: #d13438;
+    --border-color: #edebe9;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Changed for longer review content */
+    min-height: 100vh;
+}
+
+.app-container {
+    background-color: var(--card-background);
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.progress {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.question-section {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    min-height: 340px; /* ここで高さを固定し、画像や文字数によるボタンのズレを防止 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.question-image {
+    display: block;
+    max-width: 160px;
+    max-height: 160px;
+    margin: 0 auto 1.5rem auto;
+    object-fit: contain;
+}
+
+.question-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.options-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.option-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: var(--card-background);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.option-btn:hover:not(:disabled) {
+    background-color: #f3f2f1;
+    border-color: #c8c6c4;
+}
+
+.option-btn.selected {
+    border-color: var(--primary-color);
+    background-color: #e1dfdd;
+}
+
+.option-btn.correct {
+    background-color: #dff6dd;
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.option-btn.wrong {
+    background-color: #fde7e9;
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.option-btn:disabled {
+    cursor: not-allowed;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.primary-btn {
+    flex: 2;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.primary-btn:disabled {
+    background-color: #c8c6c4;
+    cursor: not-allowed;
+}
+
+.skip-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid #c8c6c4;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.skip-btn:hover {
+    background-color: #f3f2f1;
+    color: var(--text-primary);
+}
+
+/* 汎用ボタンクラスの追加 */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #c8c6c4;
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    transition: all 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+    background-color: #f3f2f1;
+}
+
+.btn:disabled {
+    background-color: #e1dfdd;
+    color: #a19f9d;
+    cursor: not-allowed;
+}
+
+.btn-correct, .btn-wrong {
+    font-size: 1.5rem;
+    flex: 1;
+}
+
+.explanation-section {
+    background-color: #f3f2f1;
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 1.5rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.explanation-section.visible {
+    display: block;
+}
+
+.explanation-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.explanation-text {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.result-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-badge.correct {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.result-badge.wrong {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.next-btn-container {
+    display: none;
+}
+
+.next-btn-container.visible {
+    display: block;
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.secondary-btn:hover {
+    background-color: #f3f2f1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.score-screen {
+    text-align: center;
+    display: none;
+}
+
+.score-screen.visible {
+    display: block;
+}
+
+.result-status {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.status-pass {
+    color: var(--success-color);
+}
+
+.status-fail {
+    color: var(--error-color);
+}
+
+.score-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 1rem 0;
+}
+
+.result-message {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Review Section */
+.review-section {
+    text-align: left;
+    margin-top: 2rem;
+    border-top: 2px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.review-section h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.review-item {
+    background-color: #faf9f8;
+    padding: 1.25rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.review-question {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.review-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.review-user-ans {
+    color: var(--text-secondary);
+}
+
+.review-correct-ans {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.review-explanation {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    background-color: #ffffff;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--primary-color);
+}
