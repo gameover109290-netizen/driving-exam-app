@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'driving-exam-cache-v1';
+const CACHE_NAME = 'driving-exam-cache-v2';
 const urlsToCache = [
     "./",
     "./index.html",
@@ -27,61 +27,59 @@ const urlsToCache = [
     "./images/stop.svg",
     "./images/zebra_zone.svg",
     "./media/blue_mov.mp4",
-    "./media/blue_mov.wmv",
     "./media/red_mov.mp4",
-    "./media/red_mov.wmv",
     "./media/right_mov.mp4",
-    "./media/right_mov.wmv",
     "./media/text_sample01.mp4",
-    "./media/text_sample01.wmv",
     "./media/text_sample02.mp4",
-    "./media/text_sample02.wmv",
     "./media/text_sample03.mp4",
-    "./media/text_sample03.wmv",
     "./media/text_sample04.mp4",
-    "./media/text_sample04.wmv",
     "./media/text_sample05.mp4",
-    "./media/text_sample05.wmv",
     "./media/text_sample06.mp4",
-    "./media/text_sample06.wmv",
     "./media/text_sample07.mp4",
-    "./media/text_sample07.wmv",
     "./media/text_sample08.mp4",
-    "./media/text_sample08.wmv",
-    "./media/yellow_mov.mp4",
-    "./media/yellow_mov.wmv"
+    "./media/yellow_mov.mp4"
 ];
 
-// インストール時にキャッシュする
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
+                console.log('Opened cache, starting download...');
+                // 1つが失敗しても全体を止めないための安全なキャッシュ登録
+                return Promise.all(
+                    urlsToCache.map(url => {
+                        return cache.add(url).catch(err => {
+                            console.error('Failed to cache:', url, err);
+                        });
+                    })
+                );
             })
     );
 });
 
-// リクエスト時のキャッシュ参照
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request)
+        caches.match(event.request, { ignoreSearch: true })
             .then(response => {
-                // キャッシュがあればそれを返す、なければネットワークへ
-                return response || fetch(event.request);
+                if (response) return response;
+                
+                // rootへのアクセスだった場合、index.htmlを返す（PWA向けの安全対策）
+                const url = new URL(event.request.url);
+                if (url.pathname.endsWith('/')) {
+                    return caches.match('./index.html');
+                }
+                
+                return fetch(event.request);
             })
     );
 });
 
-// 古いキャッシュの削除
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })

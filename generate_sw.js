@@ -16,7 +16,9 @@ const coreFiles = [
 
 function getFiles(dir) {
     if (!fs.existsSync(dir)) return [];
-    return fs.readdirSync(dir).map(f => `./${dir}/${f}`);
+    return fs.readdirSync(dir)
+        .filter(f => !f.endsWith('.wmv')) // 不要な動画を除外
+        .map(f => `./${dir}/${f}`);
 }
 
 const imageFiles = getFiles('images');
@@ -25,39 +27,49 @@ const mediaFiles = getFiles('media');
 const allFiles = [...coreFiles, ...imageFiles, ...mediaFiles];
 
 const swContent = `
-const CACHE_NAME = 'driving-exam-cache-v1';
+const CACHE_NAME = 'driving-exam-cache-v2';
 const urlsToCache = ${JSON.stringify(allFiles, null, 4)};
 
-// インストール時にキャッシュする
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
+                console.log('Opened cache, starting download...');
+                // 1つが失敗しても全体を止めないための安全なキャッシュ登録
+                return Promise.all(
+                    urlsToCache.map(url => {
+                        return cache.add(url).catch(err => {
+                            console.error('Failed to cache:', url, err);
+                        });
+                    })
+                );
             })
     );
 });
 
-// リクエスト時のキャッシュ参照
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request)
+        caches.match(event.request, { ignoreSearch: true })
             .then(response => {
-                // キャッシュがあればそれを返す、なければネットワークへ
-                return response || fetch(event.request);
+                if (response) return response;
+                
+                // rootへのアクセスだった場合、index.htmlを返す（PWA向けの安全対策）
+                const url = new URL(event.request.url);
+                if (url.pathname.endsWith('/')) {
+                    return caches.match('./index.html');
+                }
+                
+                return fetch(event.request);
             })
     );
 });
 
-// 古いキャッシュの削除
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })
@@ -69,3 +81,4 @@ self.addEventListener('activate', event => {
 
 fs.writeFileSync('sw.js', swContent);
 console.log('sw.js generated successfully.');
+
