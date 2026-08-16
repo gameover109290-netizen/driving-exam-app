@@ -95,6 +95,79 @@ function shuffleArray(array) {
     return newArray;
 }
 
+async function downloadOfflineData() {
+    const btn = document.getElementById('download-btn');
+    const progressContainer = document.getElementById('download-progress-container');
+    const progressBar = document.getElementById('download-progress-bar');
+    const statusText = document.getElementById('download-status');
+
+    if (!('caches' in window)) {
+        alert('お使いのブラウザはオフライン保存に対応していません。');
+        return;
+    }
+
+    btn.disabled = true;
+    progressContainer.style.display = 'block';
+    statusText.innerText = 'ダウンロード準備中...';
+
+    try {
+        const imageUrls = new Set();
+        questions.forEach(q => {
+            if (q.image) imageUrls.add(q.image);
+        });
+        if (typeof dangerQuestions !== 'undefined') {
+            dangerQuestions.forEach(q => {
+                if (q.image) imageUrls.add(q.image);
+                if (q.video) imageUrls.add(q.video);
+            });
+        }
+        
+        const coreFiles = [
+            './',
+            './index.html',
+            './styles.css',
+            './app.js',
+            './questions.js',
+            './danger_questions.js',
+            './manifest.json',
+            './icons/icon-192x192.png',
+            './icons/icon-512x512.png',
+            './icons/icon-180x180.png'
+        ];
+        
+        const allUrls = [...coreFiles, ...Array.from(imageUrls)];
+        const total = allUrls.length;
+        let count = 0;
+
+        const cache = await caches.open('driving-exam-cache-v3');
+
+        for (const url of allUrls) {
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                if (response.ok) {
+                    await cache.put(url, response);
+                }
+            } catch (e) {
+                console.warn('Failed to cache:', url);
+            }
+            count++;
+            const percent = Math.round((count / total) * 100);
+            progressBar.style.width = percent + '%';
+            statusText.innerText = `ダウンロード中... ${count}/${total} (${percent}%)`;
+        }
+
+        statusText.innerText = '完了しました！GitHubを非公開にしても完全に動作します。';
+        statusText.style.color = '#4CAF50';
+        statusText.style.fontWeight = 'bold';
+        btn.innerText = 'ダウンロード完了';
+    } catch (e) {
+        console.error(e);
+        statusText.innerText = 'エラーが発生しました。再試行してください。';
+        statusText.style.color = 'red';
+        btn.disabled = false;
+    }
+}
+
 function startSession(mode) {
     currentMode = mode;
     startScreen.style.display = 'none';

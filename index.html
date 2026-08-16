@@ -38,6 +38,16 @@
                 <button id="reset-weakness-btn" onclick="resetWeaknessList()" class="btn" style="flex: 1; background-color: #f3f2f1; border: 1px solid #ccc;">リセット</button>
             </div>
             <p style="font-size: 0.85em; color: #666; text-align: center; margin-bottom: 2rem;">※本免・仮免モードで間違えた問題が自動的にここに溜まります。正解すると消えます。</p>
+
+            <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ccc;">
+
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <button id="download-btn" onclick="downloadOfflineData()" class="btn" style="width: 100%; background-color: #4CAF50; color: white;">全画像データを一括ダウンロード (完全オフライン化)</button>
+                <div id="download-progress-container" style="display: none; width: 100%; background-color: #f3f3f3; margin-top: 10px; border-radius: 4px;">
+                    <div id="download-progress-bar" style="width: 0%; height: 20px; background-color: #4CAF50; border-radius: 4px; transition: width 0.3s;"></div>
+                </div>
+                <p id="download-status" style="font-size: 0.85em; color: #666; margin-top: 5px;">※GitHubを非公開にする前に必ず実行してください。</p>
+            </div>
         </div>
 
         <!-- Quiz Section -->
