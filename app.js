@@ -114,6 +114,7 @@ async function downloadOfflineData() {
         const imageUrls = new Set();
         questions.forEach(q => {
             if (q.image) imageUrls.add(q.image);
+            if (q.video) imageUrls.add(q.video);
         });
         if (typeof dangerQuestions !== 'undefined') {
             dangerQuestions.forEach(q => {
